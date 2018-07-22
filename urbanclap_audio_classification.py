@@ -73,9 +73,11 @@ temp.columns = ['ID','feature']
 
 # In[5]:
 
+print(train['Class'])
 
 # adding Class to 'temp'
 temp['Class'] = train['Class']
+
 
 
 # In[6]:
@@ -139,46 +141,48 @@ print(temp_test.head())
 
 print('---------------------Checking for NONE values---------------------')
 # checking for NONE values
-print(temp[temp.Class.isnull()])
+#print(temp.ID[temp.Class.isnull()])      # # # # # <------- here 
+
 
 # removing NONE values from temp
-temp = temp[temp.Class.notnull()]
+#temp = temp[temp.Class.notnull().any(axis = 0)]   # # # # <--------here try to fix error with '.any(axis = 0)'
+
 temp_test = temp_test[temp_test.notnull()]
 #print(temp.ID[temp.label.isnull()])
 
 
 # In[37]:
 
-
-temp.Class.unique()
-
+temp.Class.unique()  # # #  <-----IS BUG
+print('2')
 
 # In[38]:
 
 
-temp.Class.nunique()
-
+temp.Class.nunique() ##
+print('3')
 
 # In[35]:
 
 
 # Label Encoding the audio data
 lb = LabelEncoder()
-
+print('4')
 # converting pd.series into np.array for faster processing
-X = np.array(temp.feature.tolist())
+X = np.array(temp.Class.tolist())                         # # # <---- Try to change  .feature.tolist()  on .Class.tolist()
+print('5')
 y = np.array(temp.Class.tolist())
 
-
+print('6')
 y = to_categorical(lb.fit_transform(y))
-
+print('7')
 
 # In[62]:
 
 
 x_train,x_test,y_train,y_test = train_test_split(X,y, test_size=0.3)
 
-
+print('7.5')
 # ## Building a deep learning model
 
 # In[73]:
@@ -186,7 +190,7 @@ x_train,x_test,y_train,y_test = train_test_split(X,y, test_size=0.3)
 
 num_labels = y.shape[1]
 filter_size = 2
-
+print('8')
 def categorical_classifier():
     model = Sequential()
 
@@ -205,13 +209,16 @@ def categorical_classifier():
     model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer='adam')
 
     # training the data
-    #model.fit(X,y, batch_size=32, epochs=500, validation_split=0.3)
-    return model
-
+    model.fit(X,y, batch_size=32, epochs=500, validation_split=0.3)
+    return model      
+    
 
 # In[77]:
 
-
-# training the data
+categorical_classifier()
 model.fit(x_train,y_train, batch_size=32, epochs=650, validation_data=(x_test, y_test))
+# training the data
 
+
+
+print('10')
